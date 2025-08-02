@@ -1,0 +1,24 @@
+{
+  "name": "avanced",
+  "version": "1.0.0",
+  "description": "",
+  "license": "ISC",
+  "author": "",
+  "type": "commonjs",
+  "main": "index.js",
+  "scripts": {
+    "server": "tsx --watch database/server.ts",
+    "test": "vitest",
+    "build": "tsc msw_init/handle.start.ts"
+  },
+  "dependencies": {
+    "@prisma/client": "^6.13.0",
+    "express": "^5.1.0",
+    "prisma": "^6.13.0",
+    "tsx": "^4.20.3",
+    "typescript": "^5.8.3"
+  },
+  "devDependencies": {
+    "msw": "^2.10.4"
+  }
+}
