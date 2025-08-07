@@ -1,4 +1,4 @@
-# 🚫 Stop‑Mocking‑Fetch: Aprenda MSW com exemplos reais
+# 🚫 msw-fetch-tests: Aprenda MSW com exemplos reais
 
 Este repositório é um **playground didático**, focado em usar o **MSW (Mock Service Worker)** para simular APIs nos testes front-end de forma realista.  
 Aqui o objetivo é te mostrar como testar seus componentes e lógica com `fetch`, sem precisar de um back-end real.
