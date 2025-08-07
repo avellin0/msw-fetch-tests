@@ -20,25 +20,23 @@ Aqui o objetivo é te mostrar como testar seus componentes e lógica com `fetch`
 ## 📁 Estrutura do projeto
 ````text
 stop-mocking-fetch/
-├── public/
-│ └── mockServiceWorker.js # MSW Worker para ambiente browser
 ├── src/
 │ └── mock/
-│ ├── handlers/
-│ │ └── userHandler.ts # Handlers MSW para usuários
-│ └── server.ts # Setup do servidor MSW em Node
+│ ├── handler/
+│ │ └── handlerHttp.ts # Handlers MSW para usuários
+│ └── mock.ts # compilador MSW em Node
 ├── tests/
 │ ├── usuarios/
 │ │ ├── getAllUsers.test.ts
 │ │ ├── getUserByName.test.ts
 │ │ └── invalidUserParam.test.ts
 │ └── utils/
-│ └── getUserFunction.test.ts # Testes da função getUser()
-├── src/utils/
-│ └── getUser.ts # Wrapper de fetch que lança erros
+│ │ ├── getAllUsersFunction.ts # wrapper da função getAllUsers()
+│ │ └── getUniqueUserFunction.ts # wrapper da função getUser()
 ├── package.json
-├── vitest.config.ts
+├── tsconfig.json
 └── README.md
+...
 ````
 ---
 
@@ -46,54 +44,100 @@ stop-mocking-fetch/
 
 1. Clone o repositório:
 ````
-   git clone https://github.com/avellin0/stop-mocking-fetch.git
-   cd stop-mocking-fetch
+   git clone https://github.com/avellin0/msw-fetch-tests.git
+   cd msw-fetch-tests
 `````
 2. Instale as dependências:
 ````
 npm install
-# ou
-yarn
-````
-3. inicialize o MSW no diretório public/:
-```
-npm run msw:init
 ````
 4. Rode os testes:
 ````
-npm test
-# ou
-yarn test
+npm run test
 ````
+
 Todos os testes vão rodar com o MSW interceptando as chamadas HTTP simuladas.
 
-📌 Exemplos que você verá
-✅ Handler de sucesso (usersHandler.ts)
+---
 
-````
-http.get("/usuarios", () => {
-  return HttpResponse.json({
-    usuarios: [
-      { nome: "Davi", idade: 18 },
-      { nome: "Wesley", idade: 27 },
-      { nome: "Adriano", idade: 43 }
+# Como usar o msw:
+
+ Primeiro devemos baixar o msw: 
+ ````bash
+  npm i msw --save-dev
+`````
+
+  Depois de instalado, vamos importar duas funcionalidades (http e HttpResponse):
+
+  ```bash
+    import {http, HttpResponse} from "msw"
+  ````
+
+  Otimo! agora vamos criar uma variavel que recebe um array:
+
+   ```bash
+    const handle = []
+  ````
+
+  Agora com o Array pronto vamos usar uma das funcionalidades do msw o `http` essa funcionalide server para criarmos uma rota falsa/mock. A estrutura do http é simples, existem duas tipos de requisições suportadas:
+  ````
+  http.get('/user', resolver) # Faz um get da url que passar
+  http.post('/post/:id', resolver) # Faz um get da url que passar
+  ````
+
+  Em nosso exemplo vamos usar somente o `get`, dentro do nosso array, vamos criar um mock de uma url:
+
+  ````
+    const handle = [
+      http.get("http://localhost:3000/usuarios", () => {})
     ]
-  })
-})
+  ````
 
+  Perceba que essa url não retorna nada `(() => {})`, agora que vemos a funcionalidade principal, agora vamos usar o `HttpResponse`, onde nos retorna o valor mockado (Oque desejamos retornar sempre que batermos nessa url), aqui vamos retornar um  metodo próprio do HttpResponse para nos dar um JSON:
+
+  ````
+    const handle = [
+      http.get("http://localhost:3000/usuarios", () => {
+         return HttpResponse.json({
+            usuarios: [
+                { nome: "Davi", idade: 18 },
+                { nome: "Wesley", idade: 27 },
+                { nome: "Adriano", idade: 43 }
+            ]
+        })
+      })
+    ]
+  ````
+  Boa! você acabou de mockar uma API, agora vamos exportar esse array pois falta mais dois passos para fazer mocks como profissional
+
+  ````
+    export const handle = [
+        ... # mesma coisa
+      ]
+  ````
+
+### Compilando o Handle
+
+Agora que ja temos um array `handle` com nosso mock de uma API, precisamos tranformar esse código `ts` em `js` para isso devemos importar nosso array e usar uma unica funcionalidade do msw:
+
+````bash
+  
 ````
-✅ Handler de erro personalizado
+  
+
+---
+
+✅ Handler de erro por parametro
 
 ````
 http.get("/usuario/:nome", ({ params }) => {
   if (/[^a-zA-Z]/.test(params.nome)) {
     return HttpResponse.json({ message: "Erro no tipo de argumento" }, { status: 400 });
   }
-  return HttpResponse.json({ nome: params.nome, idade: 18, email: `${params.nome}@gmail.com` });
 })
 
 ````
-✅ Wrapper profissional getUser(name: string)
+✅ Wrapper getUser(name: string)
 
 ````
 export async function getUser(name: string) {
