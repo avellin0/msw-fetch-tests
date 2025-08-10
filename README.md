@@ -53,7 +53,7 @@ O MSW entra no meio desse caminho para capturar essa requisição antes dela sai
 ## Mas como isso funciona, afinal?
 
 ### No browser: Service Worker  
-O MSW usa uma tecnologia chamada Service Worker, que é tipo um “agente” que fica entre seu navegador e a internet.  
+O MSW usa uma tecnologia chamada Service Worker, que é tipo um `“agente”` que fica entre seu navegador e a internet.  
 Esse agente pode escutar todas as requisições que seu código faz (`fetch`, `XMLHttpRequest`) e decidir se deixa passar ou se responde ele mesmo.  
 Então, quando você usa MSW no browser, o Service Worker intercepta as chamadas de rede e, se encontrar um mock configurado para aquela URL,  
 ele devolve o dado simulado sem nem precisar ir à internet.  
@@ -136,7 +136,7 @@ const handlers = [
 ]
 ````
 
-Perceba que essa URL não retorna nada (() => {}). Agora vamos usar o HttpResponse, que retorna o valor mockado (o que desejamos retornar sempre que batermos nessa URL). Aqui vamos retornar um método json() próprio do HttpResponse para nos dar um JSON:
+Perceba que essa URL não retorna nada `(() => {})`. Agora vamos usar o `HttpResponse`, que retorna o valor mockado (o que desejamos retornar sempre que batermos nessa URL). Aqui vamos retornar um método `json()` próprio do HttpResponse para nos dar um JSON:
 
 ```js
 const handlers = [
@@ -160,7 +160,7 @@ export const handlers = [
 ]
 ````
 
-Configurando servidor Node.js
+## Configurando servidor Node.js
 Agora que já temos um array handlers com nosso mock de uma API, precisamos importar nosso array e usar uma única funcionalidade do MSW:
 
 ```js
@@ -170,9 +170,10 @@ import { handlers } from "./handlers/handlerHttp"
 export const server = setupServer(...handlers)
 ````
 
-Esse setupServer configura o servidor MSW no ambiente Node.js para interceptar as requisições durante os testes. Então, criamos uma variável que será chamada nos nossos testes e passamos como valor dela a função setupServer com nossos handlers como parâmetro.
+Esse `setupServer` configura o servidor MSW no ambiente Node.js para interceptar as requisições durante os testes. Então, criamos uma variável que será chamada nos nossos testes e passamos como valor dela a função setupServer com nossos handlers como parâmetro.
 
-Testando nosso handler
+## Testando nosso handler
+
 Parabéns! Essa é a última e melhor parte. Agora vamos criar um teste simples usando esse MSW. Bom, se lembra que criamos o server. Como o nome já indica, ele funciona como um servidor que roda em uma porta. Em nossos testes, devemos iniciar esse server e voilà! Está pronto, podemos fazer requisições usando fetch, axios, insomnia [...]. Vamos ver isso na prática:
 
 ```js
@@ -203,7 +204,7 @@ Aqui temos um teste básico feito com vitest, porém o que gostaria que você no
 
 - iniciamos o server com `server.listen()`,
 - depois de cada teste, os handlers são resetados com `server.resetHandlers()`, para que os dados de um teste não interfiram nos outros,
-e, por último, após todos os testes, fechamos o server com `server.close()`.
+- por último, após todos os testes, fechamos o server com `server.close()`.
 
 Assim, você termina nossa mini-aula sobre MSW e está preparado(a) para criar testes como profissional.
 
